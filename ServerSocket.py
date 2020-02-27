@@ -2,6 +2,9 @@ import socket
 
 serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+serv.connect((socket.gethostname(), 9501))
+serv.send(bytes("Hello", "utf-8"))
+
 serv.bind((socket.gethostname(), 9500))
 serv.listen(5)
 
