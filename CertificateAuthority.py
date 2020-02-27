@@ -1,4 +1,6 @@
 import socket
+from cryptography.fernet import Fernet
+key = Fernet.generate_key()
 
 CA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
