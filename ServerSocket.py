@@ -7,13 +7,13 @@ private_key = -1
 confirmation = '12037'
 
 def server():
-    cert_auth_connection = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
-    cert_auth_connection.connect((socket.gethostname(), 9501))
-    cert_auth_certificate = "Register" + "," + servername + "," + str(public_key)
-    cert_auth_connection.send(cert_auth_certificate.encode())
-    cert_auth_respond = cert_auth_connection.recv(1024).decode()
-    cert_auth_connection.close()
-    return (cert_auth_respond == "200")
+    CA_connection = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
+    CA_connection.connect((socket.gethostname(), 9501))
+    CA_certificate = "Register" + "," + servername + "," + str(public_key)
+    CA_connection.send(CA_certificate.encode())
+    CA_respond = CA_connection.recv(1024).decode()
+    CA_connection.close()
+    return (CA_respond == "200")
 
 def decrypt(text):
     decrypted_copy = ''
@@ -44,7 +44,6 @@ def main():
             while run_server:
                     receive_data = session.recv(1024).decode()
                     decrypted_copy = decrypt(receive_data)
-                    print(decrypted_copy)
                     
                     if decrypted_copy == 'Hi':
                         output_data = "Hello"
@@ -63,7 +62,7 @@ def main():
                             output_data = encrypt(confirmation + 'validation')
                         else:
                             print("Message handled")
-                            output_data = encrypt("Confirmed – Message handled")
+                            output_data = encrypt("Confirmed – Name is" + servername)
 
                         print("Sending response: \'" + output_data +"\'")
                         session.send(output_data.encode())
