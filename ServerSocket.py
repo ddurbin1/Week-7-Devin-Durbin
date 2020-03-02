@@ -48,24 +48,30 @@ def main():
                     if decrypted_copy == 'Hi':
                         output_data = "Hello"
                         print("Response: \'" + output_data +"\'")
-                        session.send(output_data.encode())
+                        session.send(encrypt(output_data).encode())
                         
-                    elif decrypted_copy == "Bye":
-                        output_data = "Good Bye"
-                        session.send(output_data.encode())
+                    elif decrypted_copy == 'Bye':
+                        print("Client has disconnected")
                         break
                     
-                    else:
+                    elif (decrypted_copy == confirmation) or (decrypted_copy == "Name"):
                         print("Text received: '" + receive_data + "'")
                         print("Client request: '" + decrypted_copy + "'")
                         if decrypted_copy == confirmation:
                             output_data = encrypt(confirmation + 'validation')
                         else:
                             print("Message handled")
-                            output_data = encrypt("Confirmed – Name is" + servername)
+                            output_data = encrypt("Confirmed – Name is " + servername)
 
                         print("Sending response: \'" + output_data +"\'")
                         session.send(output_data.encode())
+                        
+                    else:
+                        output_data = encrypt("Incorrect confirmation code, Good Bye.")
+                        session.send(output_data.encode())
+                        print("Incorrect confirmation code")
+                        break
+            break
     else:
         print("Connection requirements not met.")
         exit

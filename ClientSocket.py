@@ -18,9 +18,6 @@ def validate_server(server_name):
     else:
         return int(CA_response)
     
-def connection_server():
-    pass
-
 def encrypt(text, publickey):
     encryptedText = ''
     for char in text:
@@ -34,26 +31,28 @@ def decrypt(text):
     return decrypted_copy
 
 def main():
+    server_valiated = False
     print("Checking certificate")
     server_connection = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
     server_connection.connect((socket.gethostname(), 9500))
-    server_connection.send('Name'.encode())
+    server_connection.send(encrypt('Name', public_key).encode())
     server_response = server_connection.recv(1024).decode()
-    print(server_response)
+    print(decrypt(server_response))
     server_publickey = validate_server(server_response)
     
     if server_publickey == 1:
         print("Connecting . . .")
-        server_connection.send('Hi'.encode())
+        server_connection.send(encrypt('Hi', public_key).encode())
         server_response = server_connection.recv(1024).decode()
         print(decrypt(server_response))
     
         print("Server is validated.")
-        server_connection.send(confirmation.encode())
+        print("Connection is active")
+        server_valiated = True
+        server_connection.send(encrypt(confirmation, public_key).encode())
         server_response = server_connection.recv(1024).decode()
-        server_publickey = validate_server(server_response)
+        print(decrypt(server_response))
         
-        print("Response: " + decrypt(server_response))
 
     elif (public_key == None):
         server_connection.send('Closing'.encode())
@@ -71,16 +70,16 @@ def main():
     while server_valiated:
         user_input = input("(E)xit or (Hi) ")
        
-        if user_input == "E":
+        if user_input == 'E':
             server_valiated = False
-            server_connection.send('Bye'.encode())
-        elif user_input == "Hi":
+            server_connection.send(encrypt('Bye', public_key).encode())
+        elif user_input == 'Hi':
             server_connection.send(encrypt(user_input, public_key).encode())
             server_response = server_connection.recv(1024).decode()
-            if server_response == encrypt('Okay', public_key):
-                print('Response recieved ' + user_input)
+            if server_response == 'Hello':
+                print("Response recieved " + user_input)
             else:
-                print("Encrypted response from the server: " + server_response)
+                print("Encrypted response from the server: " + decrypt(server_response))
         else:
             pass
 main()
