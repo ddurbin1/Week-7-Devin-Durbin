@@ -16,7 +16,7 @@ def main():
         current_time = now.strftime("%H:%M:%S")
         
         response = ""
-        session, addr = connection.accept()
+        session = connection.accept()
         received_data = session.recv(1024).decode().split(',')
         action = received_data[0]
         host = received_data[1]
